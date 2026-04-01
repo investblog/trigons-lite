@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TrigonsLite — Animation Lab</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body { font-family: system-ui, -apple-system, sans-serif; background: #0a0a0f; color: #e0e0f0; }
+
+/* ── Controls ─────────────────────────── */
+.controls {
+	position: fixed; top: 0; left: 0; right: 0; z-index: 10;
+	display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
+	padding: 12px 20px;
+	background: rgba(10,10,15,0.92); backdrop-filter: blur(10px);
+	border-bottom: 1px solid rgba(142,124,255,0.2);
+	font-size: 13px;
+}
+.controls label { color: #888; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; }
+.controls select, .controls input[type=range] {
+	background: #1a1a24; color: #e0e0f0; border: 1px solid #333; border-radius: 4px;
+	padding: 4px 8px; font-size: 13px;
+}
+.controls select { cursor: pointer; }
+.controls input[type=range] { width: 90px; padding: 0; }
+.controls button {
+	padding: 6px 18px; border: none; border-radius: 4px; font-size: 13px; font-weight: 600;
+	cursor: pointer; transition: 0.15s;
+}
+.btn-in { background: #8e7cff; color: #0a0a0f; }
+.btn-in:hover { background: #a594ff; }
+.btn-out { background: #ff66cc; color: #0a0a0f; }
+.btn-out:hover { background: #ff88dd; }
+.btn-regen { background: #333; color: #ccc; }
+.btn-regen:hover { background: #444; }
+.val { color: #8e7cff; font-weight: 600; min-width: 32px; display: inline-block; }
+.group { display: flex; flex-direction: column; gap: 2px; }
+
+/* ── Canvas area ──────────────────────── */
+.stage {
+	position: fixed; inset: 0; z-index: 0;
+}
+
+/* ── Theme badges ─────────────────────── */
+.themes {
+	position: fixed; bottom: 0; left: 0; right: 0; z-index: 10;
+	display: flex; gap: 0;
+	background: rgba(10,10,15,0.92); backdrop-filter: blur(10px);
+	border-top: 1px solid rgba(142,124,255,0.15);
+}
+.themes button {
+	flex: 1; padding: 10px 8px; border: none; background: transparent;
+	color: #888; font-size: 11px; cursor: pointer; transition: 0.15s;
+	border-top: 2px solid transparent;
+}
+.themes button:hover { color: #e0e0f0; background: rgba(255,255,255,0.03); }
+.themes button.active { color: #8e7cff; border-top-color: #8e7cff; }
+</style>
+</head>
+<body>
+
+<div class="controls">
+	<div class="group">
+		<label>Effect</label>
+		<select id="fx">
+			<option value="fade">fade</option>
+			<option value="scale" selected>scale</option>
+			<option value="spin">spin</option>
+			<option value="fly">fly</option>
+		</select>
+	</div>
+	<div class="group">
+		<label>Direction</label>
+		<select id="dir">
+			<option value="top" selected>top</option>
+			<option value="bottom">bottom</option>
+			<option value="left">left</option>
+			<option value="right">right</option>
+			<option value="center">center</option>
+			<option value="random">random</option>
+		</select>
+	</div>
+	<div class="group">
+		<label>Duration</label>
+		<div><input type="range" id="dur" min="300" max="5000" value="1800" step="100"><span class="val" id="durVal">1800</span></div>
+	</div>
+	<div class="group">
+		<label>Stagger</label>
+		<div><input type="range" id="stag" min="0" max="0.9" value="0.6" step="0.05"><span class="val" id="stagVal">0.6</span></div>
+	</div>
+	<div class="group">
+		<label>Easing</label>
+		<select id="easing">
+			<option value="ease-out" selected>ease-out</option>
+			<option value="ease-in">ease-in</option>
+			<option value="ease-in-out">ease-in-out</option>
+			<option value="linear">linear</option>
+		</select>
+	</div>
+	<div class="group">
+		<label>Size</label>
+		<div>
+			<label style="font-size:12px;color:#e0e0f0;cursor:pointer"><input type="checkbox" id="sizeAuto" checked> auto</label>
+			<input type="range" id="size" min="40" max="320" value="200" step="10" disabled>
+			<span class="val" id="sizeVal">auto</span>
+		</div>
+	</div>
+	<div class="group">
+		<label>Depth</label>
+		<div><input type="range" id="depth" min="0" max="0.8" value="0.4" step="0.05"><span class="val" id="depthVal">0.4</span></div>
+	</div>
+	<button class="btn-in" id="btnIn">Animate In</button>
+	<button class="btn-out" id="btnOut">Animate Out</button>
+	<button class="btn-regen" id="btnRegen">Regenerate</button>
+</div>
+
+<div class="stage" id="stage"></div>
+
+<div class="themes" id="themes">
+	<button class="active" data-theme="dark-subtle">Dark<br>Subtle</button>
+	<button data-theme="dark-brand">Dark<br>Brand glow</button>
+	<button data-theme="dark-purple">Dark<br>Purple</button>
+	<button data-theme="dark-gradient">Dark<br>Gold→Purple</button>
+	<button data-theme="dark-neon">Dark<br>Neon pink</button>
+	<button data-theme="light-subtle">Light<br>Subtle</button>
+	<button data-theme="light-brand">Light<br>Brand red</button>
+	<button data-theme="light-purple">Light<br>Purple</button>
+</div>
+
+<script src="trigons-lite.js"></script>
+<script>
+var themes = {
+	'dark-subtle':   { colors: ['rgb(10 10 15)',  'rgb(26 26 36)',   'rgb(60 60 75)'],    bg: '#0a0a0f' },
+	'dark-brand':    { colors: ['rgb(10 10 15)',  'rgb(26 26 36)',   'rgb(252 176 29)'],  bg: '#0a0a0f' },
+	'dark-purple':   { colors: ['rgb(18 18 26)',  'rgb(60 60 75)',   'rgb(142 124 255)'], bg: '#12121a' },
+	'dark-gradient': { colors: ['rgb(10 10 15)',  'rgb(252 176 29)', 'rgb(142 124 255)'], bg: '#0a0a0f' },
+	'dark-neon':     { colors: ['rgb(26 26 36)',  'rgb(142 124 255)','rgb(255 102 204)'], bg: '#1a1a24' },
+	'light-subtle':  { colors: ['rgb(255 255 255)','rgb(243 245 246)','rgb(214 214 214)'],bg: '#ffffff' },
+	'light-brand':   { colors: ['rgb(243 245 246)','rgb(250 250 250)','rgb(235 210 212)'],bg: '#f3f5f6' },
+	'light-purple':  { colors: ['rgb(250 250 250)','rgb(243 245 246)','rgb(228 224 245)'],bg: '#fafafa' }
+};
+
+var current = 'dark-subtle';
+var tg = null;
+
+var sizeAuto = document.getElementById('sizeAuto');
+var sizeSlider = document.getElementById('size');
+var sizeVal = document.getElementById('sizeVal');
+
+sizeAuto.addEventListener('change', function() {
+	sizeSlider.disabled = sizeAuto.checked;
+	sizeVal.textContent = sizeAuto.checked ? 'auto' : sizeSlider.value;
+});
+
+function getOpts() {
+	var s = sizeAuto.checked ? 'auto' : +sizeSlider.value;
+	return {
+		colors: themes[current].colors,
+		size: s,
+		chaos: 0.65,
+		depth: +document.getElementById('depth').value,
+		startVisible: false
+	};
+}
+
+function getAnimOpts() {
+	return {
+		effect: document.getElementById('fx').value,
+		direction: document.getElementById('dir').value,
+		duration: +document.getElementById('dur').value,
+		stagger: +document.getElementById('stag').value,
+		easing: document.getElementById('easing').value
+	};
+}
+
+function rebuild() {
+	document.body.style.background = themes[current].bg;
+	document.body.style.color = current.startsWith('light') ? '#000' : '#e0e0f0';
+	tg = TrigonsLite.init('#stage', getOpts());
+	tg.animateIn(getAnimOpts());
+}
+
+// range value displays
+['dur','stag','depth'].forEach(function(id) {
+	var el = document.getElementById(id);
+	el.addEventListener('input', function() { document.getElementById(id + 'Val').textContent = el.value; });
+});
+sizeSlider.addEventListener('input', function() {
+	if (!sizeAuto.checked) sizeVal.textContent = sizeSlider.value;
+});
+
+// buttons
+document.getElementById('btnIn').addEventListener('click', function() { tg.animateIn(getAnimOpts()); });
+document.getElementById('btnOut').addEventListener('click', function() { tg.animateOut(getAnimOpts()); });
+document.getElementById('btnRegen').addEventListener('click', rebuild);
+
+// theme switcher
+document.getElementById('themes').addEventListener('click', function(e) {
+	var btn = e.target.closest('[data-theme]');
+	if (!btn) return;
+	document.querySelectorAll('.themes button').forEach(function(b) { b.classList.remove('active'); });
+	btn.classList.add('active');
+	current = btn.dataset.theme;
+	rebuild();
+});
+
+// init
+rebuild();
+</script>
+</body>
+</html>

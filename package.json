@@ -1,0 +1,29 @@
+{
+  "name": "trigons-lite",
+  "version": "1.0.0",
+  "description": "Lightweight animated triangulated backgrounds. Zero dependencies, ~2KB gzip.",
+  "main": "trigons-lite.js",
+  "files": [
+    "trigons-lite.js",
+    "trigons-lite.min.js"
+  ],
+  "scripts": {
+    "build": "npx terser trigons-lite.js --compress --mangle -o trigons-lite.min.js",
+    "size": "npx terser trigons-lite.js --compress --mangle | gzip -9 | wc -c"
+  },
+  "keywords": [
+    "triangles",
+    "low-poly",
+    "background",
+    "canvas",
+    "animation",
+    "generative",
+    "lightweight"
+  ],
+  "author": "DeeThemes",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nicsuspended/trigons-lite"
+  }
+}
