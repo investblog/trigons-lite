@@ -2,7 +2,7 @@
 
 Lightweight animated triangulated backgrounds for the web. Zero dependencies, ~2KB gzip.
 
-![demo](https://raw.githubusercontent.com/nicsuspended/trigons-lite/main/preview.png)
+![demo](https://raw.githubusercontent.com/investblog/trigons-lite/main/preview.png)
 
 ## Features
 
