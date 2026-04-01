@@ -16,19 +16,11 @@ Lightweight animated triangulated backgrounds for the web. Zero dependencies, ~2
 
 ## Install
 
-**CDN:**
+Download `trigons-lite.min.js` (3.8KB, ~2KB gzip) from [releases](https://github.com/investblog/trigons-lite/releases) and include it:
+
 ```html
-<script src="https://unpkg.com/trigons-lite@1.0.0/trigons-lite.min.js"></script>
+<script src="trigons-lite.min.js"></script>
 ```
-
-**npm:**
-```bash
-npm install trigons-lite
-```
-
-**Copy:**
-
-Download `trigons-lite.min.js` (3.8KB, ~2KB gzip) and include it.
 
 ## Quick Start
 
