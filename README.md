@@ -2,8 +2,6 @@
 
 Lightweight animated triangulated backgrounds for the web. Zero dependencies, ~2KB gzip.
 
-![demo](https://raw.githubusercontent.com/investblog/trigons-lite/main/preview.png)
-
 ## Features
 
 - Canvas-based triangulated low-poly backgrounds
@@ -168,7 +166,7 @@ All modern browsers. Canvas 2D API required.
 
 ## Credits
 
-Inspired by [Trigons](https://codecanyon.net/item/trigons-d3js-svg-triangles/24889498) by [DeeThemes](https://codecanyon.net/user/DeeThemes) — a feature-rich D3.js/SVG triangulation plugin with 15+ animation effects, gradient color modes, responsive SVG, and PNG export. If you need the full power (Delaunay triangulation, HCL/Lab color spaces, multiple color build modes, SVG output, and the complete animation library), check out the original.
+Inspired by **Trigons** by **DeeThemes** — a feature-rich D3.js/SVG triangulation plugin with 15+ animation effects, gradient color modes, responsive SVG, and PNG export. If you need the full power (Delaunay triangulation, HCL/Lab color spaces, multiple color build modes, SVG output, and the complete animation library), look for the original on Envato/CodeCanyon.
 
 TrigonsLite is a ground-up rewrite focused on minimal footprint: Canvas instead of SVG, grid triangulation instead of Delaunay, fake normals instead of D3 color math. Different tool, same visual DNA.
 
