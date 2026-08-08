@@ -57,6 +57,16 @@ jobs:
       - name: Build
         run: npm run build
 
+      # Same gate as CI — a tag can point at any commit, so re-check here too
+      - name: Size gate (min+gzip <= 3328 B)
+        run: |
+          SIZE=$(gzip -9 -c trigons-lite.min.js | wc -c)
+          echo "gzipped: $SIZE B (budget 3328)"
+          if [ "$SIZE" -gt 3328 ]; then
+            echo "::error::gzipped size $SIZE B exceeds the 3328 B budget (docs/decisions/003)"
+            exit 1
+          fi
+
       # The minified file is gitignored (generated artifacts are never committed),
       # yet package.json `files` ships it. Without this check a broken prepack
       # step would publish a package missing its own minified entry — and that only

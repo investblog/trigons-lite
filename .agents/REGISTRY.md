@@ -54,3 +54,10 @@ gate failed, then passed). Minimal on purpose, matching the code as written:
 
 `tsc` is absent, so the push gate skips type-check and says so. That is correct for a
 plain-JS library; do not add TypeScript just to satisfy the gate.
+
+## 2026-08-09 — Codex activated
+
+Added `.codex/config.toml` from the local `secrets-guard` and `light-lint` chain
+fragments. Hook commands use the resolved Git-for-Windows shell
+(`W:\Program Files\Git\bin\bash.exe`); no project-bound MCP exists, so none was
+rendered.

@@ -16,6 +16,12 @@ First npm release.
   where every `init()` left a permanent `window` handler behind.
 - Package metadata for npm: homepage, bugs, keywords; `prepack` build; ESLint + CI.
 
+### Fixed
+- Resizing (or calling `render()`) during a running animation no longer corrupts the
+  frame: the animation settles to its end state, `onComplete` fires, then the mesh
+  rebuilds. Previously the tween read stale per-triangle arrays against the new mesh.
+- `depth: 0` and `chaos: 0` are honored instead of silently falling back to defaults.
+
 ### Changed
 - `init()` returns `null` (not `undefined`) when the selector matches nothing.
 - `trigons-lite.min.js` is no longer committed — it is built by `prepack` and shipped

@@ -19,7 +19,13 @@ jobs:
       - run: npm ci
       - run: npm run lint
       - run: npm run build
-      - name: Report size
+      # Budget is a gate, not a report — see docs/decisions/003 (3.25 KB = 3328 B)
+      - name: Size gate (min+gzip <= 3328 B)
         run: |
           echo "minified: $(wc -c < trigons-lite.min.js) B"
-          echo "gzipped:  $(gzip -9 -c trigons-lite.min.js | wc -c) B"
+          SIZE=$(gzip -9 -c trigons-lite.min.js | wc -c)
+          echo "gzipped:  $SIZE B (budget 3328)"
+          if [ "$SIZE" -gt 3328 ]; then
+            echo "::error::gzipped size $SIZE B exceeds the 3328 B budget (docs/decisions/003)"
+            exit 1
+          fi

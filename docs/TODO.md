@@ -13,11 +13,14 @@ once one exists. An item is dropped when its plan moves to `plans/done/`.
 ## Open
 
 - **npm release v1.1.0 — code done, awaiting the publish steps.** Everything through the
-  release pipeline is implemented and committed; what remains needs npm account access:
-  NPM_TOKEN secret → bootstrap-publish workflow → configure Trusted Publisher
-  (investblog/trigons-lite, release.yml) → delete+revoke token → tag `v1.1.0` → push.
-  Then: enable GitHub Pages (main / root), add trigons to the family sections of
-  octagons' and hexagons' READMEs. Plan:
+  release pipeline is implemented and committed; Pages is live. What remains needs npm
+  account access: Granular Access Token (read/write packages, bypass 2FA, short expiry)
+  → repo secret `NPM_TOKEN` → run bootstrap-publish (publishes `1.1.0-bootstrap.<run_id>`
+  under dist-tag `bootstrap` — the real 1.1.0 stays free for OIDC) → configure Trusted
+  Publisher (investblog/trigons-lite, release.yml) → delete+revoke token → tag `v1.1.0`
+  → push tag (release.yml publishes with provenance + GH release) → deprecate the
+  bootstrap version. Then: add trigons to the family sections of octagons' and hexagons'
+  READMEs. Plan:
   [`../.agents/plans/active/2026-08-09-npm-release.md`](../.agents/plans/active/2026-08-09-npm-release.md)
 
 ## Noted, not scheduled

@@ -3,18 +3,28 @@ name: Bootstrap publish (one-time)
 # ONE-TIME use only, to create the package on npm so that Trusted Publishing can be
 # configured for it — npm has no package Settings page until the package exists.
 #
+# It publishes a PRERELEASE version (X.Y.Z-bootstrap.<run_id>, dist-tag `bootstrap`),
+# NOT the real X.Y.Z: npm versions are immutable, so if the bootstrap consumed the
+# real version the OIDC release workflow could never publish it again. The first
+# proper (provenance-attested) version ships via release.yml.
+#
 # How to use:
-#   1. Create an npm token: npmjs.com → Access Tokens → Generate → **Automation**
-#      (Automation skips the OTP prompt that 2FA otherwise forces on publish).
+#   1. Create an npm token: npmjs.com → Access Tokens → Generate New Token →
+#      **Granular Access Token** (classic "Automation" tokens are gone since Nov 2025):
+#      Packages & scopes = Read and write, shortest expiration offered, and enable
+#      the 2FA bypass for writes ("Bypass two-factor authentication") — without it,
+#      CI publish stops on an OTP prompt (EOTP).
 #   2. Repo → Settings → Secrets and variables → Actions → New repository secret,
 #      name it NPM_TOKEN and paste the value there. It is encrypted and write-only.
 #   3. Actions → "Bootstrap publish (one-time)" → Run workflow.
 #
-# AFTER IT SUCCEEDS, do both of these:
+# AFTER IT SUCCEEDS, do all of these:
 #   - npmjs.com → trigons-lite → Settings → Trusted Publisher → GitHub Actions →
 #     investblog / trigons-lite / release.yml
 #   - Repo → Settings → Secrets → DELETE NPM_TOKEN, and revoke it on npmjs.com.
 #     Every later release goes through release.yml over OIDC with no secret at all.
+#   - After the real version is out, tidy up:
+#     npm deprecate trigons-lite@"<the bootstrap version>" "bootstrap publish only"
 #
 # This publish carries NO provenance — attestation only comes from the OIDC path.
 
@@ -63,6 +73,14 @@ jobs:
       - name: Install
         run: npm ci
 
+      # npm versions are immutable: the bootstrap must not consume the real version,
+      # or release.yml could never publish it. Ship a marked prerelease instead.
+      - name: Switch to a bootstrap prerelease version
+        run: |
+          BASE="$(node -p "require('./package.json').version")"
+          npm version --no-git-tag-version "$BASE-bootstrap.${{ github.run_id }}"
+          echo "Publishing trigons-lite@$(node -p "require('./package.json').version") under dist-tag 'bootstrap'"
+
       - name: Lint
         run: npm run lint
 
@@ -80,15 +98,19 @@ jobs:
           done
           rm -f "$TARBALL"
 
+      # dist-tag `bootstrap` keeps `latest` free for the first real release
       - name: Publish
-        run: npm publish --access public
+        run: npm publish --access public --tag bootstrap
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Next steps
         run: |
-          echo "Published. Now:"
+          V="$(node -p "require('./package.json').version")"
+          echo "Published trigons-lite@$V (dist-tag: bootstrap). Now:"
           echo "  1. npmjs.com -> trigons-lite -> Settings -> Trusted Publisher"
           echo "     GitHub Actions | investblog | trigons-lite | release.yml"
-          echo "  2. Delete the NPM_TOKEN secret and revoke the token."
-          echo "  3. Future releases: npm version patch && git push --follow-tags"
+          echo "  2. Delete the NPM_TOKEN secret and revoke the token on npmjs.com."
+          echo "  3. Tag the real release: git tag vX.Y.Z && git push origin vX.Y.Z"
+          echo "     release.yml publishes it via OIDC with provenance."
+          echo "  4. Afterwards: npm deprecate trigons-lite@$V 'bootstrap publish only'"

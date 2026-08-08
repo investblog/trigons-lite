@@ -8,12 +8,13 @@ goal: Publish trigons-lite to npm as the flagship of the 301.st background-libra
 
 # trigons-lite → npm (v1.1.0)
 
-> **Status 2026-08-09:** Phases 1–4 done and pushed (4 commits, CI green); GitHub Pages
-> enabled (main/root → https://investblog.github.io/trigons-lite/). Size landed at 3214 B
-> min+gz — budget revised to ≤3.25 KB, see `docs/decisions/003`. Remaining (needs npm
-> account): NPM_TOKEN secret → bootstrap-publish workflow → Trusted Publisher
-> (investblog/trigons-lite, release.yml) → delete+revoke token → tag v1.1.0 → push tag.
-> Then cross-promo commits in octagons/hexagons READMEs. Move this file to `done/` after.
+> **Status 2026-08-09:** Phases 1–4 done and pushed (CI green); GitHub Pages live
+> (main/root → https://investblog.github.io/trigons-lite/). Size 3271 B min+gz —
+> budget revised to ≤3.25 KB (3328 B), see `docs/decisions/003`. External review fixes
+> applied: settle-on-resize for running animations, depth/chaos zero handling, size gate
+> in CI+release, bootstrap publishes a `-bootstrap.<run_id>` prerelease (npm versions are
+> immutable — the real 1.1.0 must first ship via OIDC), token instructions updated to
+> Granular Access Tokens. Remaining user steps: see `docs/TODO.md`. Move to `done/` after.
 
 ## Context (recon summary, 2026-08-09)
 

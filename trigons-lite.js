@@ -91,8 +91,8 @@
 			var size = opts.size === 'auto' || !opts.size
 				? Math.round(Math.max(w, 320) / 7)
 				: opts.size;
-			var jitter = opts.chaos || 0.6;
-			var depth = opts.depth || 0.35;
+			var jitter = opts.chaos == null ? 0.6 : opts.chaos;
+			var depth = opts.depth == null ? 0.35 : opts.depth;
 
 			var raw;
 			if (opts.colors) raw = opts.colors;
@@ -269,6 +269,23 @@
 
 		// ── Animate ─────────────────────────────────────────
 
+		var animOrder = null, animDone = null;
+
+		// snap a running animation to its end state before the mesh is rebuilt —
+		// the tween arrays (delays/angles) are sized for the old mesh and must
+		// never be read against a regenerated one
+		function settleAnim() {
+			if (!rafId) return;
+			cancelAnimationFrame(rafId);
+			rafId = null;
+			shown = animOrder === 'in';
+			if (mode === 'lines') {
+				canvas.style.opacity = shown ? 1 : 0;
+				if (!shown) stop();
+			}
+			if (animDone) animDone();
+		}
+
 		function animate(order, ao) {
 			ao = ao || {};
 			if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
@@ -276,6 +293,8 @@
 			var dur = ao.duration || 1500;
 			var fn = ease[ao.easing || 'ease-out'] || ease['ease-out'];
 			var done = ao.onComplete;
+			animOrder = order;
+			animDone = done;
 
 			if (mode === 'lines') {
 				// batched strokes preclude per-edge alpha — fade the whole layer
@@ -363,6 +382,7 @@
 		// ── Public API ──────────────────────────────────────
 
 		function render() {
+			settleAnim();
 			if (!seedPinned) seed = Math.random() * 1e9 | 0; // new random pattern
 			generate();
 			redraw();
@@ -379,7 +399,7 @@
 		function onResize() {
 			clearTimeout(timer);
 			// keeps the current seed: same mesh, just wider/narrower
-			timer = setTimeout(function () { generate(); redraw(); }, 150);
+			timer = setTimeout(function () { settleAnim(); generate(); redraw(); }, 150);
 		}
 		window.addEventListener('resize', onResize);
 
