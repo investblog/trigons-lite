@@ -1,0 +1,8 @@
+# Scoped on purpose: this only pins the agent hook scripts, it does not impose a
+# line-ending convention on the project's own source.
+#
+# The hooks are POSIX shell run by Git-for-Windows bash. Checked out with CRLF they
+# fail with `$'\r': command not found`, so a clone would silently lose the quality gate.
+*.sh text eol=lf
+.agents/hooks/git-quality-gate/pre-commit text eol=lf
+.agents/hooks/git-quality-gate/pre-push   text eol=lf

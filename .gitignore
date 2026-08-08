@@ -1,1 +1,29 @@
 node_modules/
+
+# generated build output (built by `prepack`, shipped via package.json `files`)
+trigons-lite.min.js
+
+# --- baseline (from ~/.agents/templates/gitignore) ---
+.env
+.env.*
+!.env.example
+.dev.vars
+.secrets
+*.pem
+id_rsa
+id_ed25519
+.venv/
+venv/
+__pycache__/
+.ruff_cache/
+.mypy_cache/
+.pytest_cache/
+dist/
+build/
+.astro/
+.wrangler/
+*.log
+.codegraph/
+.docindex/
+context/attachments/
+.DS_Store

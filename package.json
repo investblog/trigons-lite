@@ -1,29 +1,49 @@
 {
   "name": "trigons-lite",
-  "version": "1.0.0",
-  "description": "Lightweight animated triangulated backgrounds. Zero dependencies, ~2KB gzip.",
+  "version": "1.1.0",
+  "description": "Lightweight animated triangulated backgrounds. Zero dependencies, ~3KB gzip.",
   "main": "trigons-lite.js",
   "files": [
     "trigons-lite.js",
-    "trigons-lite.min.js"
+    "trigons-lite.min.js",
+    "CHANGELOG.md"
   ],
   "scripts": {
-    "build": "npx terser trigons-lite.js --compress --mangle -o trigons-lite.min.js",
-    "size": "npx terser trigons-lite.js --compress --mangle | gzip -9 | wc -c"
+    "build": "terser trigons-lite.js --compress --mangle -o trigons-lite.min.js",
+    "size": "node scripts/size.mjs",
+    "lint": "eslint .",
+    "prepack": "npm run build"
   },
   "keywords": [
     "triangles",
+    "triangle",
     "low-poly",
     "background",
     "canvas",
     "animation",
     "generative",
+    "generative-art",
+    "geometric",
+    "pattern",
+    "hero-background",
+    "background-animation",
+    "zero-dependencies",
+    "vanilla-js",
+    "svg-pattern",
     "lightweight"
   ],
-  "author": "DeeThemes",
+  "author": "301st (https://301.st)",
   "license": "MIT",
+  "homepage": "https://github.com/investblog/trigons-lite#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/investblog/trigons-lite"
+    "url": "git+https://github.com/investblog/trigons-lite.git"
+  },
+  "bugs": {
+    "url": "https://github.com/investblog/trigons-lite/issues"
+  },
+  "devDependencies": {
+    "eslint": "^9.39.4",
+    "terser": "^5.37.0"
   }
 }
