@@ -42,8 +42,13 @@ verification surface; `npm run build` produces `trigons-lite.min.js` via terser.
 
 ### Project-specific (append only after a real incident)
 - **`trigons-lite.min.js` is generated — never hand-edit it.** Change
-  `trigons-lite.js`, then run `npm run build`. Both files are committed and shipped
-  (`package.json` `files`), so a stale minified build ships silently.
+  `trigons-lite.js`; the minified file is gitignored and rebuilt by `prepack`
+  (see `docs/decisions/001`). It ships via the npm tarball and release assets only;
+  the release workflows assert it is present in the tarball.
+- **Gzip beats clever — trim size only by measurement.** Helper extraction and
+  array-ification of repeated code look like big wins raw but gzip already absorbs the
+  repetition (~5-20 B each, measured). Only feature deletion moves the number
+  (see `docs/decisions/003`). Measure with `npm run size` after every step.
 
 ## Self-configuration (adapt and explain)
 `~/.agents` provides a minimal shared baseline. Adapting to the project is standard work.
