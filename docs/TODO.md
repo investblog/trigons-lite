@@ -20,8 +20,9 @@ once one exists. An item is dropped when its plan moves to `plans/done/`.
 
 ## Noted, not scheduled
 
-- **No test suite.** The library has no automated tests; `demo.html` is manual-only, and
-  the push gate has nothing to run. Worth a decision on whether that is acceptable for a
-  library of this size before adding a framework.
+- **No test suite.** The library has no automated tests; `index.html` is manual-only, and
+  the push gate has nothing to run. The browser self-test pages used for v1.1.0 were
+  session-scratch and not kept. `seed` + deterministic mesh now make a frame-hash test
+  cheap to build — worth a decision before adding a framework.
 - **No type-check.** `tsc` is absent, so the push gate skips it. Intentional for a plain
   ES5 library — see `../.agents/REGISTRY.md`.
